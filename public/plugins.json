@@ -1,0 +1,13 @@
+[
+  {
+    "name": "plugin-contact-tracing",
+    "version": "0.0.0",
+    "class": "ContactTracingPlugin",
+    "requires": [
+      {
+        "@twilio/flex-ui": "^1"
+      }
+    ],
+    "src": "http://localhost:3001/plugin-contact-tracing.js"
+  }
+]

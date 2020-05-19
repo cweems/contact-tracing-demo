@@ -1,0 +1,25 @@
+{
+    "name": "serverless",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "test": "node_modules/.bin/mocha",
+        "start": "twilio-run --env"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "dotenv": "^8.2.0",
+        "mocha": "^7.1.2",
+        "nock": "^12.0.3",
+        "sinon": "^9.0.2",
+        "twilio-run": "^2.0.0-beta.11"
+    },
+    "engines": {
+        "node": "8.10.0"
+    },
+    "dependencies": {
+        "js-base64": "^2.5.2",
+        "node-fetch": "^2.6.0",
+        "twilio": "^3.43.1"
+    }
+}

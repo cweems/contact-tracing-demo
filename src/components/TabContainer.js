@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { Manager } from "@twilio/flex-ui";
-import ContactList from "./ContactList";
+import Dashboard from "./Dashboard";
 import IntakeForm from "./IntakeForm";
 
 export default class TabContainer extends Component {
@@ -18,8 +18,6 @@ export default class TabContainer extends Component {
         };
     }
 
-    componentDidMount() {}
-
     componentWillReceiveProps(props) {
         if (props.task) {
             let currentTabs = this.state.tablist;
@@ -30,13 +28,21 @@ export default class TabContainer extends Component {
                 tabIndex = 0;
             }
 
+            console.log("Task Attributes");
+            console.log(props.task.attributes);
+
             let from = props.task.attributes.from;
+            let outbound_to = props.task.attributes.outbound_to;
             let zipcode = props.task.attributes.zipcode;
             let call = props.task.attributes.call_sid;
 
-            if (!currentTabs.has(from) && props.task.status !== "wrapping") {
-                currentTabs.set(from, {
+            if (
+                !currentTabs.has(outbound_to) &&
+                props.task.status !== "wrapping"
+            ) {
+                currentTabs.set(outbound_to, {
                     from: from,
+                    outbound_to: outbound_to,
                     zipcode: zipcode,
                     conference: call,
                 });
@@ -61,18 +67,19 @@ export default class TabContainer extends Component {
         let tabs = [];
 
         for (let [key, value] of this.state.tablist.entries()) {
+            console.log("TABABABAB");
+            console.log(key, value);
             tabs.push(
                 <Tab>
-                    {value.from}
+                    Current Call
                     <a
                         className="close"
-                        name={value.from}
+                        name={value.outbound_to}
                         onClick={(e) => this.removeTab(e)}
                     />
                 </Tab>
             );
         }
-
         return tabs;
     }
 
@@ -80,18 +87,10 @@ export default class TabContainer extends Component {
         let panels = [];
 
         for (let [key, value] of this.state.tablist.entries()) {
-            let el = <div>Test</div>;
-
+            console.log(key);
             panels.push(
                 <TabPanel forceRender={true}>
-                    <IntakeForm />
-                    <button
-                        className="button"
-                        name={key}
-                        onClick={(e) => this.removeTab(e)}
-                    >
-                        Close
-                    </button>
+                    <IntakeForm identifier={key} />
                 </TabPanel>
             );
         }
@@ -108,10 +107,14 @@ export default class TabContainer extends Component {
                 <TabList>
                     {this.createTabs()}
                     <Tab>Contacts</Tab>
+                    <Tab>IntakeForm</Tab>
                 </TabList>
                 {this.createPanels()}
                 <TabPanel>
-                    <ContactList />
+                    <Dashboard />
+                </TabPanel>
+                <TabPanel>
+                    <IntakeForm identifier={"+14136587734"} />
                 </TabPanel>
             </Tabs>
         );

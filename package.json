@@ -26,6 +26,7 @@
     "react-dom": "16.5.2",
     "react-scripts": "3.4.1",
     "react-tabs": "^3.1.0",
+    "twilio-sync": "^0.12.2",
     "validator": "^13.0.0"
   },
   "devDependencies": {

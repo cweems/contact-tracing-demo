@@ -11,7 +11,7 @@ exports.handler = TokenValidator(function (context, event, callback) {
     response.appendHeader("Access-Control-Allow-Headers", "Content-Type");
 
     const message = {
-        to: "cweems@twilio.com",
+        to: context.RECIPIENT_EMAIL,
         from: "trial@trail.com",
         subject: "COVID-19 Resources",
         text: "Our records indicate you may have been exposed to COVID-19.",

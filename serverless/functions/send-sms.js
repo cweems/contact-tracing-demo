@@ -1,8 +1,10 @@
-exports.handler = function (context, event, callback) {
+const TokenValidator = require("twilio-flex-token-validator").functionValidator;
+
+exports.handler = TokenValidator(function (context, event, callback) {
     const response = new Twilio.Response();
     response.appendHeader(
         "Access-Control-Allow-Origin",
-        "http://localhost:3000"
+        "https://flex.twilio.com"
     );
     response.appendHeader("Access-Control-Allow-Methods", "POST");
     response.appendHeader("Content-Type", "application/json");
@@ -24,4 +26,4 @@ exports.handler = function (context, event, callback) {
             console.log(err);
             callback(err);
         });
-};
+});

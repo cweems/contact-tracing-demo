@@ -3,6 +3,7 @@ import Divider from "@material-ui/core/Divider";
 import createContact from "./helpers/createContact";
 import ContactList from "./ContactList";
 import SyncClient from "twilio-sync";
+import { Manager } from "@twilio/flex-ui";
 
 import {
     Grid,
@@ -31,10 +32,17 @@ export default class IntakeForm extends React.Component {
 
         this.state = {
             name: "",
+            phone: "",
+            email: "",
+            address: "",
+            comments: "",
             secondaryName: "",
             secondaryPhone: "",
             secondaryContacts: [],
         };
+
+        const manager = Manager.getInstance();
+        this.token = manager.user.token;
 
         this.serviceBaseUrl = "http://localhost:3000";
         this.handleChange = this.handleChange.bind(this);
@@ -42,7 +50,7 @@ export default class IntakeForm extends React.Component {
         this.updateSecondaryName = this.updateSecondaryName.bind(this);
         this.updateSecondaryPhone = this.updateSecondaryPhone.bind(this);
         this.clickToSendSurvey = this.clickToSendSurvey.bind(this);
-        this.getToken = this.getToken.bind(this);
+        this.updateState = this.updateState.bind(this);
     }
 
     handleChange(event) {
@@ -54,35 +62,57 @@ export default class IntakeForm extends React.Component {
     // async loadContact(identifier) {}
 
     async componentDidMount() {
-        const token = await this.getToken();
-        console.log("TOKEOKEKOEKOE");
-        console.log(token);
-        const syncClient = new SyncClient(token);
-
-        syncClient
-            .map("MPb5ad1753e67d4bff9719714157823881")
-            .then(function (map) {
-                console.log("Successfully opened a Map. SID: " + map.sid);
-                map.on("itemUpdated", function (args) {
-                    console.log("Map item " + args.item.key + " was updated");
-                    console.log("args.item.value:", args.item.value);
-                    console.log("args.isLocal:", args.isLocal);
-                });
+        let mapClient = await fetch(
+            `${this.serviceBaseUrl}/create-sync-token?Token=${this.token}`
+        )
+            .then((response) => {
+                return response.json();
             })
-            .catch(function (error) {
-                console.log("Unexpected error", error);
+            .then((data) => {
+                console.log(data);
+                const syncClient = new SyncClient(data.token);
+
+                return syncClient
+                    .map("MPb5ad1753e67d4bff9719714157823881")
+                    .then(function (map) {
+                        console.log(
+                            "Successfully opened a Map. SID: " + map.sid
+                        );
+
+                        return map;
+                    })
+                    .catch(function (error) {
+                        console.log("Unexpected error", error);
+                    });
             });
+
+        mapClient.on(
+            "itemUpdated",
+            function (args) {
+                console.log("Map item " + args.item.key + " was updated");
+                console.log("args.item.value:", args.item.value);
+
+                let value = args.item.value;
+
+                this.setState({
+                    name: value.name,
+                    phone: value.phone,
+                    email: value.email,
+                    address: value.address,
+                    comments: value.comments,
+                });
+                console.log("args.isLocal:", args.isLocal);
+            }.bind(this)
+        );
     }
 
-    async getToken() {
-        try {
-            await fetch(`${this.serviceBaseUrl}/create-sync-token}`);
-        } catch (error) {
-            console.log(error);
-            this.setState({
-                error,
-            });
-        }
+    updateState(phone, email, address, comments) {
+        this.setState({
+            phone: phone,
+            email: email,
+            address: address,
+            comments: comments,
+        });
     }
 
     async createSecondaryContact(e) {
@@ -127,7 +157,7 @@ export default class IntakeForm extends React.Component {
                     this.serviceBaseUrl
                 }/send-survey?toPhoneNumber=${encodeURIComponent(
                     destinationNumber
-                )}`
+                )}&Token=${this.token}`
             );
         } catch (error) {
             console.log(error);
@@ -142,7 +172,7 @@ export default class IntakeForm extends React.Component {
             await fetch(
                 `${this.serviceBaseUrl}/make-call?phone=${encodeURIComponent(
                     destinationNumber
-                )}`
+                )}&Token=${this.token}`
             );
         } catch (error) {
             console.log(error);
@@ -161,7 +191,7 @@ export default class IntakeForm extends React.Component {
         };
 
         return (
-            <div style={{ paddingLeft: "15px;" }}>
+            <div style={{ paddingLeft: 15 }}>
                 <Grid style={{ padding: 15 }} item xs={12}>
                     <Typography variant="h5" component="h3">
                         Contact Information
@@ -204,7 +234,7 @@ export default class IntakeForm extends React.Component {
                     id="outlined-email"
                     label="Address"
                     style={inputStyles}
-                    value={this.state.email}
+                    value={this.state.address}
                     onChange={(e) => this.handleChange(e)}
                     margin="normal"
                     variant="outlined"
@@ -212,8 +242,9 @@ export default class IntakeForm extends React.Component {
 
                 <TextField
                     id="outlined-notes"
-                    label="Notes"
+                    label="Comments"
                     style={inputStyles}
+                    value={this.state.comments}
                     multiline
                     rows="4"
                     margin="normal"

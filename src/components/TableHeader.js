@@ -1,5 +1,6 @@
 import * as React from "react";
 import { TableHead, TableRow, TableCell } from "@material-ui/core";
+import { InputItem } from "@twilio/flex-ui";
 
 export default class TableHeader extends React.Component {
     constructor() {
@@ -9,6 +10,7 @@ export default class TableHeader extends React.Component {
     render() {
         return (
             <TableHead style={{ display: "block" }}>
+                {/* <InputItem /> */}
                 <TableRow>
                     <TableCell
                         style={{

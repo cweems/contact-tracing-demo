@@ -1,4 +1,6 @@
-exports.handler = function (context, event, callback) {
+const TokenValidator = require("twilio-flex-token-validator").functionValidator;
+
+exports.handler = TokenValidator(function (context, event, callback) {
     const sgMail = require("@sendgrid/mail");
     sgMail.setApiKey(context.SENDGRID_API_KEY);
 
@@ -11,7 +13,7 @@ exports.handler = function (context, event, callback) {
     const message = {
         to: "cweems@twilio.com",
         from: "trial@trail.com",
-        subject: "COVID-19 Exposure Alert",
+        subject: "COVID-19 Resources",
         text: "Our records indicate you may have been exposed to COVID-19.",
     };
     sgMail
@@ -22,4 +24,4 @@ exports.handler = function (context, event, callback) {
         .catch((e) => {
             console.log(e);
         });
-};
+});

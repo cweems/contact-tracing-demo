@@ -1,17 +1,12 @@
-/**
- *  Sync Token Template
- *
- *  This Template shows you how to mint Access Tokens for Twilio Sync. Please note, this is for prototyping purposes
- *  only. You will want to validate the identity of clients requesting Access Token in most production applications and set
- *  the identity when minting the Token.
- *
- *  Pre-requisites
- *  - Create a Sync Service (https://www.twilio.com/docs/api/sync/rest/services)
- *   - Create an API Key (https://www.twilio.com/console/runtime/api-keys)
- */
+const TokenValidator = require("twilio-flex-token-validator").functionValidator;
 
-exports.handler = function (context, event, callback) {
-    // make sure you enable ACCOUNT_SID and AUTH_TOKEN in Functions/Configuration
+exports.handler = TokenValidator(function (context, event, callback) {
+    const response = new Twilio.Response();
+    response.appendHeader("Access-Control-Allow-Origin", "*");
+    response.appendHeader("Access-Control-Allow-Methods", "OPTIONS POST");
+    response.appendHeader("Content-Type", "application/json");
+    response.appendHeader("Access-Control-Allow-Headers", "Content-Type");
+
     const ACCOUNT_SID = context.ACCOUNT_SID;
 
     const SERVICE_SID = context.CONTACT_SYNC_SERVICE;
@@ -33,5 +28,9 @@ exports.handler = function (context, event, callback) {
     accessToken.addGrant(syncGrant);
     accessToken.identity = IDENTITY;
 
-    callback(null, { token: accessToken.toJwt() });
-};
+    const token = accessToken.toJwt();
+    response.setBody({ token: accessToken.toJwt() });
+
+    console.log(response.body);
+    callback(null, response);
+});

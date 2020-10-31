@@ -21,6 +21,7 @@
         "js-base64": "^2.5.2",
         "node-fetch": "^2.6.0",
         "sendgrid": "^5.2.3",
-        "twilio": "^3.43.1"
+        "twilio": "^3.43.1",
+        "twilio-flex-token-validator": "^1.5.3"
     }
 }

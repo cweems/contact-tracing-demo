@@ -1,4 +1,5 @@
 import isMobilePhone from "validator/lib/isMobilePhone";
+import { Manager } from "@twilio/flex-ui";
 
 export default async function createContact(name, phone) {
     console.log(name, phone);
@@ -7,9 +8,12 @@ export default async function createContact(name, phone) {
         const uriName = encodeURIComponent(name);
         const uriPhone = encodeURIComponent(phone);
 
+        const manager = Manager.getInstance();
+        const token = manager.user.token;
+
         try {
             const response = await fetch(
-                `http://localhost:3000/create-contact?name=${uriName}&phone=${uriPhone}`
+                `http://localhost:3000/create-contact?name=${uriName}&phone=${uriPhone}&Token=${token}`
             );
             const json = await response.json();
             const newEntry = json.data;

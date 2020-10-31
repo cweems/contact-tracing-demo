@@ -3,7 +3,6 @@ import { VERSION } from "@twilio/flex-ui";
 import { FlexPlugin, loadCSS } from "flex-plugin";
 
 import reducers, { namespace } from "./states";
-import ContactList from "./components/ContactList";
 import TabContainer from "./components/TabContainer";
 
 const PLUGIN_NAME = "ContactTracingPlugin";
@@ -34,14 +33,7 @@ export default class ContactTracingPlugin extends FlexPlugin {
                     task={task}
                 />
             );
-            console.log("HERERRERRERERER");
-            console.log("urlcallback task: ", task);
-            // flex.CRMContainer.Content.replace(
-            //     <ContactList key="contacts" task={task} />
-            // );
         };
-
-        //flex.CRMContainer.replace(<ContactList />);
 
         flex.AgentDesktopView.defaultProps.splitterOptions = {
             minimumSecondPanelSize: "70%",

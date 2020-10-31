@@ -1,19 +1,11 @@
-exports.handler = function (context, event, callback) {
+const TokenValidator = require("twilio-flex-token-validator").functionValidator;
+
+exports.handler = TokenValidator(function (context, event, callback) {
     const response = new Twilio.Response();
     response.appendHeader("Access-Control-Allow-Origin", "*");
     response.appendHeader("Access-Control-Allow-Methods", "OPTIONS POST");
     response.appendHeader("Content-Type", "application/json");
     response.appendHeader("Access-Control-Allow-Headers", "Content-Type");
-    // let validateTokenPath = Runtime.getFunctions()["validate-token"].path;
-    // let validateToken = require(validateTokenPath);
-
-    // let validationResult = validateToken(token);
-    // console.log(validationResult.body.status);
-
-    //   if (validationResult.body.status !== '200') {
-    //     response = validationResult;
-    //     callback(null, response);
-    //   }
 
     let client = context.getTwilioClient();
 
@@ -36,4 +28,4 @@ exports.handler = function (context, event, callback) {
             console.log(err);
             callback(err);
         });
-};
+});

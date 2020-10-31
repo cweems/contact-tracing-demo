@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Actions } from "@twilio/flex-ui";
+import { Actions, Manager } from "@twilio/flex-ui";
 import {
     Grid,
     TextField,
@@ -32,6 +32,9 @@ export default class Dashboard extends React.Component {
             error: null,
         };
 
+        const manager = Manager.getInstance();
+        this.token = manager.user.token;
+
         this.serviceBaseUrl = "http://localhost:3000";
         this.updateName = this.updateName.bind(this);
         this.updatePhone = this.updatePhone.bind(this);
@@ -40,9 +43,10 @@ export default class Dashboard extends React.Component {
 
     async componentDidMount() {
         try {
-            const response = await fetch(`${this.serviceBaseUrl}/get-contacts`);
+            const response = await fetch(
+                `${this.serviceBaseUrl}/get-contacts?Token=${this.token}`
+            );
             const json = await response.json();
-            console.log(json);
             this.setState({ contacts: json });
         } catch (error) {
             console.log(error);
@@ -96,7 +100,7 @@ export default class Dashboard extends React.Component {
             <div>
                 <Paper style={{ padding: 15 }} elevation={0}>
                     <ErrorBar error={this.state.error} />
-                    <Grid spacing={2}>
+                    <Grid container spacing={8}>
                         <Grid item xs={12}>
                             <Typography variant="h5" component="h3">
                                 Contact Tracing Directory
@@ -140,7 +144,7 @@ export default class Dashboard extends React.Component {
                             </form>
                         </Grid>
                         <Grid item xs={12}>
-                            <Table stickyheader aria-label="simple table">
+                            <Table aria-label="simple table">
                                 <TableHeader />
                                 <TableBody
                                     style={{

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Actions } from "@twilio/flex-ui";
+import { Actions, Manager } from "@twilio/flex-ui";
 import { TableRow, TableCell, Typography, Button } from "@material-ui/core";
 
 import formatPhoneNumber from "./helpers/formatPhoneNumber";
@@ -20,6 +20,8 @@ export default class ContactList extends React.Component {
             contacts: [],
         };
 
+        const manager = Manager.getInstance();
+        this.token = manager.user.token;
         this.serviceBaseUrl = "http://localhost:3000";
         this.clickToDial = this.clickToDial.bind(this);
         this.clickToSendVoiceAlert = this.clickToSendVoiceAlert.bind(this);
@@ -39,7 +41,7 @@ export default class ContactList extends React.Component {
             await fetch(
                 `${this.serviceBaseUrl}/make-call?phone=${encodeURIComponent(
                     destinationNumber
-                )}`
+                )}&Token=${this.token}`
             );
         } catch (error) {
             console.log(error);
@@ -54,7 +56,7 @@ export default class ContactList extends React.Component {
             await fetch(
                 `${this.serviceBaseUrl}/send-sms?phone=${encodeURIComponent(
                     destinationNumber
-                )}`
+                )}&Token=${this.token}`
             );
         } catch (error) {
             console.log(error);
@@ -66,7 +68,9 @@ export default class ContactList extends React.Component {
 
     async clickToSendEmail(destinationNumber) {
         try {
-            await fetch(`${this.serviceBaseUrl}/send-email`);
+            await fetch(
+                `${this.serviceBaseUrl}/send-email&Token=${this.token}`
+            );
         } catch (error) {
             console.log(error);
             this.setState({
@@ -80,7 +84,7 @@ export default class ContactList extends React.Component {
             await fetch(
                 `${this.serviceBaseUrl}/delete-contact?key=${encodeURIComponent(
                     key
-                )}`
+                )}&Token=${this.token}`
             );
 
             const contacts = this.state.contacts.filter((el) => {
@@ -101,8 +105,8 @@ export default class ContactList extends React.Component {
     }
 
     render() {
-        let contactList;
-        if (this.props.contacts.length > 0) {
+        let contactList = [];
+        if (this.props.contacts && this.props.contacts.length > 0) {
             contactList = this.props.contacts.map((contact) => {
                 return (
                     <TableRow key={contact.phone}>
@@ -179,17 +183,19 @@ export default class ContactList extends React.Component {
             });
         } else {
             contactList = (
-                <p
-                    style={{
-                        marginTop: 15,
-                        background: "#00000033",
-                        padding: 15,
-                        borderRadius: 3,
-                        fontSize: "1.3em",
-                    }}
-                >
-                    No contacts
-                </p>
+                <tr>
+                    <td
+                        style={{
+                            marginTop: 15,
+                            background: "#00000033",
+                            padding: 15,
+                            borderRadius: 3,
+                            fontSize: "1.3em",
+                        }}
+                    >
+                        No contacts
+                    </td>
+                </tr>
             );
         }
 

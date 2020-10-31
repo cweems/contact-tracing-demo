@@ -19,6 +19,7 @@ export default class TabContainer extends Component {
     }
 
     componentWillReceiveProps(props) {
+        
         if (props.task) {
             let currentTabs = this.state.tablist;
             let tabIndex;
@@ -27,9 +28,6 @@ export default class TabContainer extends Component {
             } else {
                 tabIndex = 0;
             }
-
-            console.log("Task Attributes");
-            console.log(props.task.attributes);
 
             let from = props.task.attributes.from;
             let outbound_to = props.task.attributes.outbound_to;
@@ -67,8 +65,6 @@ export default class TabContainer extends Component {
         let tabs = [];
 
         for (let [key, value] of this.state.tablist.entries()) {
-            console.log("TABABABAB");
-            console.log(key, value);
             tabs.push(
                 <Tab>
                     Current Call
@@ -107,14 +103,10 @@ export default class TabContainer extends Component {
                 <TabList>
                     {this.createTabs()}
                     <Tab>Contacts</Tab>
-                    <Tab>IntakeForm</Tab>
                 </TabList>
                 {this.createPanels()}
                 <TabPanel>
                     <Dashboard />
-                </TabPanel>
-                <TabPanel>
-                    <IntakeForm identifier={"+14136587734"} />
                 </TabPanel>
             </Tabs>
         );
